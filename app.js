@@ -24,8 +24,14 @@ mqttRouter.connect()
 
 //process
 setInterval(function(){
-  myProcess.myProcess()
-}, 10000)
+  myProcess.checkData()
+}, 15000)
+
+// setInterval(function(){
+//   myProcess.sendServer();
+// }, 20000)
+
+
 
 //collect data
 // var arr={room: "ss", temp: 24, humi: 80}

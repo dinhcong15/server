@@ -10,8 +10,6 @@ module.exports={
       console.log('Connected to the test database.');
     });
 
-    
-
     db.close((err) => {
       if (err) {
         console.error(err.message);
