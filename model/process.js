@@ -1,17 +1,15 @@
 var sqlite3 = require('sqlite3').verbose()
 const fetch = require('node-fetch');
+let db = new sqlite3.Database('./dataBase/test');
+var calculate = require('./calculate')
+var mqttRouter = require('./mqtt');
+
+
 module.exports = {
   myProcess() {
-    let db = new sqlite3.Database('./dataBase/test', (err) => {
-      if (err) {
-        console.error(err.message);
-      }
-      console.log('Connected to the test database.');
-    });
-
     db.serialize(() => {
-      var sql = 'select * from data order by timer desc limit ?'
-      var params = 4
+      var sql = 'select * from rawData order by time desc limit ?'
+      var params = 5
       db.all(sql, params, function (err, result) {
         if (err) {
           console.error(err)
@@ -39,65 +37,61 @@ module.exports = {
         }
       });
     });
-    db.close((err) => {
-      if (err) {
-        console.error(err.message);
-      }
-      console.log('Close the database connection.');
-    });
-  },
+    db.close();
+  },  
 
-  checkData(){           
-    // if(parseFloat(arr[2])>27){              
-    //     var message = "1";
-    //     client.publish(settings.topic, message);  
-    // }
-    // else if(parseFloat(arr[2])<=27){
-    //     var message = "2";
-    //     client.publish(settings.topic, message);
-    // }
-    let db = new sqlite3.Database('./dataBase/test');
-    var sql = 'select * from data order by timer desc limit ?'
+   checkData(){           
+    var sql = 'select * from rawData order by time desc limit ?'
     var params = 5
-    db.each(sql, params, function (err, result) {
-        if (err) {
-            console.error(err)
-            return;
-        }
-        else {
-            console.log(result)
-            console.log("--------------------------")
-        }
-    });
-    db.close();   
+
+    var x = parseFloat("0.0");
+    var count = 0;
+    db.all(sql, params,async function (err, result) {
+          if (err) {
+              console.error(err)
+              return;
+          }
+          else {
+              let average =await calculate.average(result);
+              console.log(average)
+              let max = await calculate.max(result)
+              console.log(max);
+              let min = await calculate.min(result)
+              console.log(min);
+              // mqttRouter.sendEsp("server get stauts device")
+              mqttRouter.sendEsp("room:01|Id:01led01|status:ON|700")
+          }
+      });
+    db.close((err)=>{
+      console.log('close db')
+    }); 
+      
   },
 
   sendServer() {
     // let emai = "dd"
     // let password = "ddx"
-    let todo = {
-      userId: 123,
-      title: "Ok thông đường",
-      completed: false
+    let data = {
+      id: 123,
+      temp: 33,
+      humi: 80,
+      light:400
     }
 
-    fetch("http://localhost:3000/s", {
+    fetch("http://localhost:3000/rasp", {
       method:"post",
       headers:{
           "content-Type":"application/json"
       },
-      body:JSON.stringify({
-          todo
-      })
+      body:JSON.stringify(data)
     }).then(res=>res.json())
     .then(data=>{
         console.log(data)
         if(data.error){
-            console.log("error!!!@")
+            console.log("error!!!")
         }
         else{
           console.log("OK!!!")
-            // history.push('/home')
         }
     }).catch(err=>(
         console.log(err)

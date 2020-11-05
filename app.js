@@ -4,34 +4,36 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+// global.DB =  new sqlite3.Database('./dataBase/test')
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var mqttRouter = require('./model/mqtt');
 var mySqlite = require('./model/db')
 var NodeData = require('./model/nodeData')
 var myProcess = require('./model/process')
+var format = require('./model/dataFormat')
 var nodeData = new NodeData();
 
 var app = express();
 // var myMqttClient = new mqttRouter();
-// myMqttClient.connect();
 
 //mqtt
 mqttRouter.connect()
-
+// format.disassembleEsp();
 //database
 // mySqlite.mySqlite()
 
 //process
-setInterval(function(){
-  myProcess.checkData()
-}, 15000)
-
 // setInterval(function(){
-//   myProcess.sendServer();
+myProcess.checkData()
+// }, 1000)
+// myProcess.checkData(function(err, result){
+//   console.log(result)
+// })
+// setInterval(function(){
+  // myProcess.sendServer();
 // }, 20000)
-
-
 
 //collect data
 // var arr={room: "ss", temp: 24, humi: 80}
