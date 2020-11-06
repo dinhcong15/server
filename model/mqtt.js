@@ -22,9 +22,7 @@ module.exports={
                 }
                 else 
                     console.error(err);
-            })
-            
-           
+            })       
         });
         
         client.on('message', function(topic, message){

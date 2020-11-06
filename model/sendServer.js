@@ -1,7 +1,7 @@
 var sqlite3 = require('sqlite3').verbose()
 const fetch = require('node-fetch');
 module.exports = {
-    sendSensor() {
+    sSensor() {
         let todo = [
             {
                 userId: 1,
@@ -38,7 +38,7 @@ module.exports = {
             ))
     },
 
-    sendDevice() {
+    sDevice() {
         let todo = {
             userId: 123,
             title: "Ok thông đường",

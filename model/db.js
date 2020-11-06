@@ -9,7 +9,7 @@ module.exports = {
         if (err)
           callback(err);
         else
-          console.log('connect')
+          // console.log('connect')
           callback(err);
       });
   },
@@ -67,7 +67,7 @@ module.exports = {
       });
   },
 
-  select(sql, value, callback) {
+  selectEach(sql, value, callback) {
     var titles = [];
     db.each(sql, value,
       function (err, row) {
@@ -82,6 +82,17 @@ module.exports = {
         else
           callback(null, titles);
       });
+  },
+
+  selectAll(sql, params, callback) {
+    db.all(sql, params, function (err, result) {
+        if (err) {
+          callback(err);
+        }
+        else {
+          callback(err, result);
+        }
+    });
   },
 }
 

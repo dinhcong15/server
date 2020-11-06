@@ -1,6 +1,7 @@
 module.exports = {
     average(result) {
         let averageObj = {
+            room:'',
             temp: 0,
             humi: 0,
             light: 0,
@@ -11,6 +12,8 @@ module.exports = {
         var countHumi = 0;
         var countLight = 0;
         var countSmoke = 0;
+        averageObj.room=result[0].room;
+
         result.forEach(function (row) {
             //temp
             if (!isNaN(row.temp)) {
@@ -67,11 +70,15 @@ module.exports = {
     },
     min(result){
         let minObj = {
+            room:'',
             temp: 10000,
             humi: 10000,
             light: 10000,
             smoke: 10000
         }
+
+        minObj.room=result[0].room;
+
         result.forEach(function(row){
             minObj.temp = Math.min(minObj.temp, row.temp)
             minObj.humi = Math.min(minObj.humi, row.humi)
@@ -84,11 +91,15 @@ module.exports = {
 
     max(result){
         let maxObj = {
+            room:'',
             temp: 0,
             humi: 0,
             light: 0,
             smoke: 0
         }
+
+        maxObj.room=result[0].room;
+
         result.forEach(function(row){
             maxObj.temp = Math.max(maxObj.temp, row.temp)
             maxObj.humi = Math.max(maxObj.humi, row.humi)

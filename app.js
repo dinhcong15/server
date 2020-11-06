@@ -13,6 +13,7 @@ var mySqlite = require('./model/db')
 var NodeData = require('./model/nodeData')
 var myProcess = require('./model/process')
 var format = require('./model/dataFormat')
+var check = require('./model/checking')
 var nodeData = new NodeData();
 
 var app = express();
@@ -23,10 +24,13 @@ mqttRouter.connect()
 // format.disassembleEsp();
 //database
 // mySqlite.mySqlite()
-
 //process
 // setInterval(function(){
-myProcess.checkData()
+// myProcess.checkData('03', 5)
+myProcess.myProcess()
+
+
+
 // }, 1000)
 // myProcess.checkData(function(err, result){
 //   console.log(result)
