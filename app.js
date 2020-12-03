@@ -15,34 +15,29 @@ var myProcess = require('./model/process')
 var format = require('./model/dataFormat')
 var check = require('./model/checking')
 var nodeData = new NodeData();
-
+var calculate = require('./model/calculate')
 var app = express();
 // var myMqttClient = new mqttRouter();
-
+// calculate.a()
 //mqtt
 mqttRouter.connect()
 // format.disassembleEsp();
+
 //database
-// mySqlite.mySqlite()
-//process
-// setInterval(function(){
-// myProcess.checkData('03', 5)
 myProcess.myProcess()
 
+//process
+// global.countRoom1 = 1;
 
-
-// }, 1000)
-// myProcess.checkData(function(err, result){
-//   console.log(result)
-// })
 // setInterval(function(){
-  // myProcess.sendServer();
-// }, 20000)
+//   myProcess.myProcess();
+// }, 15000)
 
-//collect data
-// var arr={room: "ss", temp: 24, humi: 80}
-// nodeData.data(arr);
-// nodeData.print()
+// setInterval(function(){
+//   myProcess.oneMin();
+// }, 60000)
+
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

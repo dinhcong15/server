@@ -2,7 +2,7 @@ var mqtt = require('mqtt');
 var format = require('./dataFormat')
 
 var settings = {
-    mqttServerUrl : "192.168.137.66",
+    mqttServerUrl : "192.168.137.78",
     port : 18833,
     topic : "HOME01"
 }
@@ -14,8 +14,7 @@ module.exports={
         client.on('connect', function(){
             // if(err){
             //     console.error("err: "+err);
-            // }
-            
+            // }          
             client.subscribe(settings.topic, function(err){
                 if (!err) {
                     console.log("Subscribed topic " + settings.topic);
@@ -32,6 +31,6 @@ module.exports={
     },
     sendEsp(message){
         client.publish(settings.topic, message);
-        console.log("send esp")
+        console.log("send esp: " + message)
     }
 }

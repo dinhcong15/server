@@ -1,7 +1,7 @@
 module.exports = {
     average(result) {
         let averageObj = {
-            room:'',
+            room: '',
             temp: 0,
             humi: 0,
             light: 0,
@@ -12,7 +12,7 @@ module.exports = {
         var countHumi = 0;
         var countLight = 0;
         var countSmoke = 0;
-        averageObj.room=result[0].room;
+        averageObj.room = result[0].room;
 
         result.forEach(function (row) {
             //temp
@@ -68,18 +68,19 @@ module.exports = {
         // console.log(averageObj)
         return averageObj;
     },
-    min(result){
+
+    min(result) {
         let minObj = {
-            room:'',
+            room: '',
             temp: 10000,
             humi: 10000,
             light: 10000,
             smoke: 10000
         }
 
-        minObj.room=result[0].room;
+        minObj.room = result[0].room;
 
-        result.forEach(function(row){
+        result.forEach(function (row) {
             minObj.temp = Math.min(minObj.temp, row.temp)
             minObj.humi = Math.min(minObj.humi, row.humi)
             minObj.light = Math.min(minObj.light, row.light)
@@ -89,18 +90,18 @@ module.exports = {
         return minObj;
     },
 
-    max(result){
+    max(result) {
         let maxObj = {
-            room:'',
+            room: '',
             temp: 0,
             humi: 0,
             light: 0,
             smoke: 0
         }
 
-        maxObj.room=result[0].room;
+        maxObj.room = result[0].room;
 
-        result.forEach(function(row){
+        result.forEach(function (row) {
             maxObj.temp = Math.max(maxObj.temp, row.temp)
             maxObj.humi = Math.max(maxObj.humi, row.humi)
             maxObj.light = Math.max(maxObj.light, row.light)
@@ -110,4 +111,91 @@ module.exports = {
         return maxObj;
     },
 
+    increase(result) {
+        let obj = {
+            room: result.room,
+            temp: false,
+            light: false,
+            smoke: false
+        }
+        let cTemp = 0;
+        let cLigth = 0;
+        let cSmoke = 0;
+
+        for (let a = 0; a < result.length - 1; a++) {
+            if (result[a].temp > result[ a+1].temp) {
+                cTemp = 0;
+            } else {
+                cTemp++
+            }
+            
+            if (result[a].light > result[a + 1].light) {
+                cLigth = 0
+            } else {
+                cLigth++
+            }
+            //
+            if (result[a].smoke > result[a + 1].smoke) {
+                cSmoke = 0
+            } else {
+                cSmoke++
+            }
+        }
+        ////
+        if (cTemp == result.length - 1) {
+            obj.temp = true;
+        }
+        if (cLigth == result.length - 1) {
+            obj.light = true;
+        }
+        if (cSmoke == result.length - 1) {
+            obj.smoke = true;
+        }
+        return obj
+    },
+
+
+
+    reducing(result) {
+        let obj = {
+            room: result.room,
+            temp: false,
+            light: false,
+            smoke: false
+        }
+        let cTemp = 0;
+        let cLigth = 0;
+        let cSmoke = 0;
+
+        for (let a = 0; a < result.length - 1; a++) {
+            if (result[a].temp < result[ a+1].temp) {
+                cTemp = 0;
+            } else {
+                cTemp++
+            }
+            
+            if (result[a].light < result[a + 1].light) {
+                cLigth = 0
+            } else {
+                cLigth++
+            }
+            //
+            if (result[a].smoke < result[a + 1].smoke) {
+                cSmoke = 0
+            } else {
+                cSmoke++
+            }
+        }
+        ////
+        if (cTemp == result.length - 1) {
+            obj.temp = true;
+        }
+        if (cLigth == result.length - 1) {
+            obj.light = true;
+        }
+        if (cSmoke == result.length - 1) {
+            obj.smoke = true;
+        }
+        return obj
+    },
 }

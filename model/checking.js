@@ -1,175 +1,220 @@
 var sqlite3 = require('sqlite3').verbose()
-var dataBase = require('./db')
-dataBase.connect('./dataBase/test', function (err) {
-    if (err)
-        throw err;
-});
+let db = new sqlite3.Database('./dataBase/test');
 var calculate = require('./calculate')
 var mqttRouter = require('./mqtt');
-
+var compare = require('./compare');
+var send = require('./sending')
+var Data = require('./object')
 
 module.exports = {
-    // cStandard() {
-    //     var sql = 'select * from standard where room = ? order by time desc '
-    //     db.get(sql, '01', function (err, result) {
-    //         if (err) {
-    //             console.error(err)
-    //             return;
-    //         }
-    //         else {
-    //             console.log(result)
-    //         }
-    //     });
+  async checkData(room, number) {
+    var sql = 'select * from rawData where room = ? order by time desc limit ?'
+    var params = [room, number]
+    
+    db.all(sql, params, async function (err, resultRaw) {
+      if(err){
+        console.log(err);
+      }
+      else if(resultRaw==''){
+          console.log(null);        
+      }
+      else {
+        let average = await calculate.average(resultRaw);
+        let max = await calculate.max(resultRaw);
+        let min = await calculate.min(resultRaw);
+        let increase = await calculate.increase(resultRaw);
 
-    //     db.close();
-    // },
+        compare.compareDataSendServer(average, min, max, function (result) {
+          let message = "";
+          let data = new Data.DataSendAsync()
+          // console.log(result)
+          data.room = result.room;
+          //value
+          data.temp.temp = { ave: average.temp, min: min.temp, max: max.temp }
+          data.humi.humi = { ave: average.humi, min: min.humi, max: max.humi }
+          data.light.light = { ave: average.light, light: min.light, max: max.light }
+          data.smoke.smoke = average.smoke
 
-    selectCheckData(sql, params) {
-        db.all(sql, params, async function (err, result) {
-            if (err) {
-                console.error(err)
-                return;
+          if (result == null) {
+            console.log('data empty!')
+          } else {
+            //deviation
+            data.temp.deviation = result.temp.deviation
+            data.humi.deviation = result.humi.deviation
+            data.light.deviation = result.light.deviation
+            data.smoke.deviation = result.humi.deviation.ave
+            //flag
+            data.temp.warning = result.temp.flag
+            data.humi.warning = result.humi.flag
+            data.light.warning = result.light.flag
+            data.smoke.warning = result.smoke.flag
+          }
+          
+          //////////////////////////////////----------------------//////////////////////////////
+          compare.compareDataStandard(average, min, max,async function (resultStandard) {
+            if (resultStandard == null) {
+              console.log('data empty!')
             }
             else {
-                let average = await calculate.average(result);
-                console.log(average)
-                let max = await calculate.max(result)
-                console.log(max);
-                let min = await calculate.min(result)
-                console.log(min);
-                // mqttRouter.sendEsp("server get stauts device")
-                // mqttRouter.sendEsp("room:01|Id:01led01|status:ON|700")
+              //deviation
+              data.temp.deviationStandard = resultStandard.temp.deviation
+              data.humi.deviationStandard = resultStandard.humi.deviation
+              data.light.deviationStandard = resultStandard.light.deviation
+              data.smoke.deviationStandard = resultStandard.humi.deviation.ave
+              //flag
+              data.temp.warningStandard = resultStandard.temp.flag
+              data.humi.warningStandard = resultStandard.humi.flag
+              data.light.warningStandard = resultStandard.light.flag
+              data.smoke.warningStandard = resultStandard.smoke.flag
             }
-        });
-        db.close((err) => {
-            console.log('close db')
-        });
 
-    },
-
-    compareDataStandard(data, callback) {
-        let obj = {
-            room: '',
-            temp: {
-                value: 0,
-                flag: false
-            },
-            humi: {
-                value: 0,
-                flag: false
-            },
-            light: {
-                value: 0,
-                flag: false
-            },
-            smoke: {
-                value: 0,
-                flag: false
-            },
+            //////////////////////////////////----------------------//////////////////////////////
+            // console.log(data);
+            let flagSend = false;
+            if (data.temp.warning === true && data.temp.warningStandard === true) {
+              flagSend = true;
+              countRoom1 = 0;
+              if (data.temp.deviation.ave > 0) {
+                message = message + 'room:' + result.room + '|Id:led01|status:ON|999'
+                mqttRouter.sendEsp(message)
+              } else {
+                message = message + 'room:' + result.room + '|Id:led01|status:OFF|999'
+                mqttRouter.sendEsp(message)
+              }
+              message = "";
+            }
+            if (data.light.warning === true && data.light.warningStandard === true) {
+              flagSend = true;
+              if (data.light.deviation.ave > 0) {
+                message = message + 'room:' + result.room + '|Id:led02|status:ON|999'
+                mqttRouter.sendEsp(message)
+              } else {
+                message = message + 'room:' + result.room + '|Id:led02|status:OFF|999'
+                mqttRouter.sendEsp(message)
+              }
+              message = "";
+            }
+            if (data.smoke.warning === true && data.smoke.warningStandard === true) {
+              flagSend = true;
+              if (data.smoke.deviation.ave > 0) {
+                message = message + 'room:' + result.room + '|Id:led03|status:ON|999'
+                mqttRouter.sendEsp(message)
+              } else {
+                message = message + 'room:' + result.room + '|Id:led03|status:OFF|999'
+                mqttRouter.sendEsp(message)
+              }
+              message = "";
+            }
+            if(flagSend ===true ){
+              console.log('1515151515151515')
+              send.sendSenSor(data)
+              flagSend = false;
+            }
+          })
+        });///
         }
-        obj.room = ave.room;
+      });
+  },
 
-        var sql = 'select * from standard where room = ? order by time desc limit 1'
-        dataBase.selectEach(sql, ave.room, function (err, result) {
-            if(err){
-                callback(err);
+  
+
+  async checkDataOneMin(room, number) {
+    var sql = 'select * from rawData where room = ? order by time desc limit ?'
+    var params = [room, number]
+    db.all(sql, params, async function (err, resultRaw) {
+      if (err) {
+        console.error(err)
+        return;
+      }
+      else {
+        let average = await calculate.average(resultRaw);
+        let max = await calculate.max(resultRaw);
+        let min = await calculate.min(resultRaw);
+
+        compare.compareDataSendServer(average, min, max, function (result) {
+          let message = "";
+          let data = new Data.DataSendAsync()
+          data.room = result.room;
+          //value
+          data.temp.temp = { ave: average.temp, min: min.temp, max: max.temp }
+          data.humi.humi = { ave: average.humi, min: min.humi, max: max.humi }
+          data.light.light = { ave: average.light, light: min.light, max: max.light }
+          data.smoke.smoke = average.smoke
+
+          if (result == null) {
+            console.log('data empty!')
+          } else {
+            //deviation
+            data.temp.deviation = result.temp.deviation
+            data.humi.deviation = result.humi.deviation
+            data.light.deviation = result.light.deviation
+            data.smoke.deviation = result.humi.deviation.ave
+            //flag
+            data.temp.warning = result.temp.flag
+            data.humi.warning = result.humi.flag
+            data.light.warning = result.light.flag
+            data.smoke.warning = result.smoke.flag
+          }
+          
+          //////////////////////////////////----------------------//////////////////////////////
+          compare.compareDataStandard(average, min, max,async function (resultStandard) {
+            if (resultStandard == null) {
+              console.log('data empty!')
             }
-            else if(result==''){
-                callback(null);
-            
-            }else{
-                if (Math.abs(ave.temp - result[0].temp) > 1) {
-                    obj.temp.flag = true;
-                    // obj.temp.value= ave.temp - result[0].temp;
-                }  
-                if (Math.abs(ave.humi - result[0].humi) > 5) {
-                    obj.humi.flag = true;
-                    // obj.temp.value = ave.temp - result[0].temp
-                }  
-                if (Math.abs(ave.light - result[0].light) > 50) {
-                    obj.light.flag = true;
-                    // obj.light.value = ave.light - result[0].light
-                }  
-                if (ave.smoke - result[0].smoke > 0) {
-                    obj.smoke.flag = true;
-                    // obj.smoke.value = ave.smoke - result[0].smoke
-                }
-                obj.temp.value = ave.temp - result[0].temp
-                obj.temp.value = parseFloat(obj.temp.value.toFixed(2))
-                obj.humi.value = ave.humi - result[0].humi
-                obj.humi.value = parseFloat(obj.humi.value.toFixed(2))
-                obj.light.value = ave.light - result[0].light
-                obj.light.value = parseFloat(obj.light.value.toFixed(2))
-                obj.smoke.value = ave.smoke - result[0].smoke
-                obj.smoke.value = parseFloat(obj.smoke.value.toFixed(2))
-                
-                callback(obj);
-            }               
-        });
-    },
+            else {
+              //deviation
+              data.temp.deviationStandard = resultStandard.temp.deviation
+              data.humi.deviationStandard = resultStandard.humi.deviation
+              data.light.deviationStandard = resultStandard.light.deviation
+              data.smoke.deviationStandard = resultStandard.humi.deviation.ave
+              //flag
+              data.temp.warningStandard = resultStandard.temp.flag
+              data.humi.warningStandard = resultStandard.humi.flag
+              data.light.warningStandard = resultStandard.light.flag
+              data.smoke.warningStandard = resultStandard.smoke.flag
+            }
+            // console.log(data)
+            //////////////////////////////////----------------------//////////////////////////////
+            if (data.temp.warning === true || data.temp.warningStandard === true) {
 
-    compareDataSendServer(ave, min, max, callback) {
-        let obj = {
-            room: '',
-            temp: {
-                value: 0,
-                flag: false
-            },
-            humi: {
-                value: 0,
-                flag: false
-            },
-            light: {
-                value: 0,
-                flag: false
-            },
-            smoke: {
-                value: 0,
-                flag: false
-            },
+              if (data.temp.deviation.ave > 0) {
+                message = message + 'room:' + result.room + '|Id:led01|status:ON|999'
+                mqttRouter.sendEsp(message)
+              } else {
+                message = message + 'room:' + result.room + '|Id:led01|status:OFF|999'
+                mqttRouter.sendEsp(message)
+              }
+              message = "";
+            }
+            if (data.light.warning === true || data.light.warningStandard === true) {
+              if (data.light.deviation.ave > 0) {
+                message = message + 'room:' + result.room + '|Id:led02|status:ON|999'
+                mqttRouter.sendEsp(message)
+              } else {
+                message = message + 'room:' + result.room + '|Id:led02|status:OFF|999'
+                mqttRouter.sendEsp(message)
+              }
+              message = "";
+            }
+            if (data.smoke.warning === true || data.smoke.warningStandard === true) {
+              if (data.smoke.deviation.ave > 0) {
+                message = message + 'room:' + result.room + '|Id:led03|status:ON|999'
+                mqttRouter.sendEsp(message)
+              } else {
+                message = message + 'room:' + result.room + '|Id:led03|status:OFF|999'
+                mqttRouter.sendEsp(message)
+              }
+              message = "";
+            }
+            send.sendSenSorOneMin(data);
+            console.log('1min--------------------------')
+            
+          })     
+        });///
         }
-        obj.room = ave.room;
+      });
+  },
 
-        var sql = 'select * from dataSendServer where room = ? order by time desc limit 1'
-        dataBase.selectEach(sql, ave.room, function (err, result) {
-            if(err){
-                callback(err);
-            }
-            else if(result==''){
-                callback(null);
-            
-            }else{
-                if (Math.abs(ave.temp - result[0].temp) > 0.5) {
-                    obj.temp.flag = true;
-                    // obj.temp.value= ave.temp - result[0].temp;
-                }  
-                if (Math.abs(ave.humi - result[0].humi) > 2) {
-                    obj.humi.flag = true;
-                    // obj.temp.value = ave.temp - result[0].temp
-                }  
-                if (Math.abs(ave.light - result[0].light) > 20) {
-                    obj.light.flag = true;
-                    // obj.light.value = ave.light - result[0].light
-                }  
-                if (ave.smoke - result[0].smoke > 0) {
-                    obj.smoke.flag = true;
-                    // obj.smoke.value = ave.smoke - result[0].smoke
-                }
-                obj.temp.value = ave.temp - result[0].temp
-                obj.temp.value = parseFloat(obj.temp.value.toFixed(2))
-                obj.humi.value = ave.humi - result[0].humi
-                obj.humi.value = parseFloat(obj.humi.value.toFixed(2))
-                obj.light.value = ave.light - result[0].light
-                obj.light.value = parseFloat(obj.light.value.toFixed(2))
-                obj.smoke.value = ave.smoke - result[0].smoke
-                obj.smoke.value = parseFloat(obj.smoke.value.toFixed(2))
-                
-                callback(obj);
-            }          
-            
-        });
-
-    },
 
 }
 

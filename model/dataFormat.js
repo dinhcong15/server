@@ -1,23 +1,25 @@
 var sqlite3 = require('sqlite3').verbose()
-var dataBase = require('./db')
-dataBase.connect('./dataBase/test', function(err) {
-    if(err)
-    throw err;
-});
+// const db = require('./db');
+// var dataBase = require('./db')
+// dataBase.connect('./dataBase/test', function(err) {
+//     if(err)
+//     throw err;
+// });
+let db = new sqlite3.Database('./dataBase/test');
 
 module.exports = {
     async disassembleEsp(message) {
-        var arrSaveDB =[] ;
-        var arr = String(message).split('|');
+        let arrSaveDB =[] ;
+        let arr = String(message).split('|');
         arr.forEach(function(value){
             arrT = String(value).split(':') 
             arrSaveDB.push(arrT[1])
         })       
 
-        var date = new Date();
+        let date = new Date();
         if(Number(arrSaveDB[0])==1){
-            var sql ='INSERT INTO rawData (room, temp, humi, light, smoke, time) VALUES (?,?,?,?,?,?)'
-            var params = [  
+            let sql ='INSERT INTO rawData (room, temp, humi, light, smoke, time) VALUES (?,?,?,?,?,?)'
+            let params = [  
                 arrSaveDB[1],
                 parseFloat(parseFloat(arrSaveDB[2]).toFixed(2)),
                 parseFloat(parseFloat(arrSaveDB[3]).toFixed(2)),
@@ -26,20 +28,35 @@ module.exports = {
                 date
             ]
             //sqlite3 khong ho tro async nen chi dung callback
-            dataBase.insert(sql, params, function(err){
+            db.run(sql, params, function(err){
                 if(err)
                     console.log(err);
             });
         }
         else if (Number(arrSaveDB[0])==2){
-            var sql ='INSERT INTO device (room, led01, led02, led03) VALUES (?,?,?,?)'
-            var params = [arrSaveDB[1],arrSaveDB[2],arrSaveDB[3],arrSaveDB[4]]
-            dataBase.insert(sql, params, function(err){
+            let sql ="select * from devices where id = ?"
+            let params = [arrSaveDB[2]]
+            db.get(sql, params, function(err, result){
                 if(err)
                     console.log(err);
+                else if(result==null){
+                    sql ="insert into devices (id, room, status) values (?,?,?)"
+                    params = [arrSaveDB[2], arrSaveDB[1], arrSaveDB[3]]
+                    db.run(sql, params, function(err){
+                        if(err)
+                            console.log(err);
+                    })
+                }else{
+                    sql ="update devices set status = ? where id = ?"
+                    params = [arrSaveDB[3], arrSaveDB[2]]
+                    db.run(sql, params, function(err){
+                        if(err)
+                            console.log(err);
+                    })
+                }
             })
-        }
-        return  
+            
+        }  
     },
     //nhan tu server
     disassembleStandardServer(message){             
