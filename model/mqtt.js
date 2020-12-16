@@ -2,7 +2,7 @@ var mqtt = require('mqtt');
 var format = require('./dataFormat')
 
 var settings = {
-    mqttServerUrl : "192.168.137.78",
+    mqttServerUrl : "192.168.137.60",
     port : 18833,
     topic : "HOME01"
 }

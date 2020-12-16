@@ -156,7 +156,7 @@ module.exports = {
 
 
 
-    reducing(result) {
+    reduction(result) {
         let obj = {
             room: result.room,
             temp: false,

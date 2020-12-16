@@ -3,7 +3,7 @@ let db = new sqlite3.Database('./dataBase/test');
 var Data = require('./object')
 
 module.exports = {
-    compareDataStandard(ave, min, max, callback) {
+    compareDataStandard(ave, min, max,  callback) {
         let obj = new Data.DataCheck()
         obj.room = ave.room;
         obj.temp.value =  {ave: ave.temp, min :min.temp, max: max.temp}
@@ -54,7 +54,7 @@ module.exports = {
         });
     },
 
-    async compareDataSendServer(ave, min, max, callback) {
+    async compareDataSendServer(ave, min, max, increase, reduction, callback) {
         let obj = new Data.DataCheck()
         obj.room = ave.room;
         obj.temp.value =  {ave: ave.temp, min :min.temp, max: max.temp}
@@ -74,8 +74,9 @@ module.exports = {
             }else{
                 if (Math.abs(ave.temp - result.temp) > 0.5) {
                     //day tang hoac giam
-                    // calculate.increase()
-                    obj.temp.flag = true;
+                    if(increase.temp ===true||reduction.temp===true){
+                        obj.temp.flag = true;
+                    }                   
                 }  
                 if (Math.abs(ave.humi - result.humi) > 2) {
                     obj.humi.flag = true;

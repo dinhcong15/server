@@ -25,7 +25,6 @@ class DataSendAsync {
         },
         this.smoke = {
             smoke: 0.0,
-            deviationStandard: 0.0,
             deviation: 0.0,
             warningStandard: false,
             warning: false

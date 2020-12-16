@@ -23,8 +23,9 @@ module.exports = {
         let max = await calculate.max(resultRaw);
         let min = await calculate.min(resultRaw);
         let increase = await calculate.increase(resultRaw);
+        let reduction = await calculate.reduction(resultRaw)
 
-        compare.compareDataSendServer(average, min, max, function (result) {
+        compare.compareDataSendServer(average, min, max, increase, reduction,  function (result) {
           let message = "";
           let data = new Data.DataSendAsync()
           // console.log(result)
@@ -60,7 +61,7 @@ module.exports = {
               data.temp.deviationStandard = resultStandard.temp.deviation
               data.humi.deviationStandard = resultStandard.humi.deviation
               data.light.deviationStandard = resultStandard.light.deviation
-              data.smoke.deviationStandard = resultStandard.humi.deviation.ave
+              // data.smoke.deviationStandard = resultStandard.humi.deviation.ave
               //flag
               data.temp.warningStandard = resultStandard.temp.flag
               data.humi.warningStandard = resultStandard.humi.flag
@@ -71,7 +72,7 @@ module.exports = {
             //////////////////////////////////----------------------//////////////////////////////
             // console.log(data);
             let flagSend = false;
-            if (data.temp.warning === true && data.temp.warningStandard === true) {
+            if (data.temp.warning === true || data.temp.warningStandard === true) {
               flagSend = true;
               countRoom1 = 0;
               if (data.temp.deviation.ave > 0) {
@@ -83,7 +84,7 @@ module.exports = {
               }
               message = "";
             }
-            if (data.light.warning === true && data.light.warningStandard === true) {
+            if (data.light.warning === true || data.light.warningStandard === true) {
               flagSend = true;
               if (data.light.deviation.ave > 0) {
                 message = message + 'room:' + result.room + '|Id:led02|status:ON|999'
@@ -94,19 +95,16 @@ module.exports = {
               }
               message = "";
             }
-            if (data.smoke.warning === true && data.smoke.warningStandard === true) {
+            if (data.smoke.warning === true || data.smoke.warningStandard === true) {
               flagSend = true;
-              if (data.smoke.deviation.ave > 0) {
+              if(data.smoke.warningStandard === true){
                 message = message + 'room:' + result.room + '|Id:led03|status:ON|999'
-                mqttRouter.sendEsp(message)
-              } else {
-                message = message + 'room:' + result.room + '|Id:led03|status:OFF|999'
                 mqttRouter.sendEsp(message)
               }
               message = "";
             }
             if(flagSend ===true ){
-              console.log('1515151515151515')
+              // console.log('1515151515151515')
               send.sendSenSor(data)
               flagSend = false;
             }
@@ -166,17 +164,14 @@ module.exports = {
               data.temp.deviationStandard = resultStandard.temp.deviation
               data.humi.deviationStandard = resultStandard.humi.deviation
               data.light.deviationStandard = resultStandard.light.deviation
-              data.smoke.deviationStandard = resultStandard.humi.deviation.ave
               //flag
               data.temp.warningStandard = resultStandard.temp.flag
               data.humi.warningStandard = resultStandard.humi.flag
-              data.light.warningStandard = resultStandard.light.flag
-              data.smoke.warningStandard = resultStandard.smoke.flag
+              data.light.warningStandard = resultStandard.light.flag             
             }
             // console.log(data)
             //////////////////////////////////----------------------//////////////////////////////
             if (data.temp.warning === true || data.temp.warningStandard === true) {
-
               if (data.temp.deviation.ave > 0) {
                 message = message + 'room:' + result.room + '|Id:led01|status:ON|999'
                 mqttRouter.sendEsp(message)

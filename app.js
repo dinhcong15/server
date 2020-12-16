@@ -17,26 +17,17 @@ var check = require('./model/checking')
 var nodeData = new NodeData();
 var calculate = require('./model/calculate')
 var app = express();
-// var myMqttClient = new mqttRouter();
-// calculate.a()
-//mqtt
+
+
 mqttRouter.connect()
-// format.disassembleEsp();
 
-//database
-myProcess.myProcess()
+setInterval(function(){
+  myProcess.myProcess();
+}, 12000)
 
-//process
-// global.countRoom1 = 1;
-
-// setInterval(function(){
-//   myProcess.myProcess();
-// }, 15000)
-
-// setInterval(function(){
-//   myProcess.oneMin();
-// }, 60000)
-
+setInterval(function(){
+  myProcess.oneMin();
+}, 60000)
 
 
 // view engine setup
