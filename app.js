@@ -10,11 +10,11 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var mqttRouter = require('./model/mqtt');
 var mySqlite = require('./model/db')
-var NodeData = require('./model/nodeData')
+// var NodeData = require('./model/nodeData')
 var myProcess = require('./model/process')
 var format = require('./model/dataFormat')
 var check = require('./model/checking')
-var nodeData = new NodeData();
+// var nodeData = new NodeData();
 var calculate = require('./model/calculate')
 var app = express();
 

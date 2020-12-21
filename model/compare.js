@@ -54,7 +54,7 @@ module.exports = {
         });
     },
 
-    async compareDataSendServer(ave, min, max, increase, reduction, callback) {
+    async compareDataSendServer(ave, min, max, callback) {
         let obj = new Data.DataCheck()
         obj.room = ave.room;
         obj.temp.value =  {ave: ave.temp, min :min.temp, max: max.temp}
@@ -74,9 +74,9 @@ module.exports = {
             }else{
                 if (Math.abs(ave.temp - result.temp) > 0.5) {
                     //day tang hoac giam
-                    if(increase.temp ===true||reduction.temp===true){
-                        obj.temp.flag = true;
-                    }                   
+                    // if(increase.temp ===true||reduction.temp===true){
+                    //     obj.temp.flag = true;
+                    // }                   
                 }  
                 if (Math.abs(ave.humi - result.humi) > 2) {
                     obj.humi.flag = true;
@@ -84,7 +84,7 @@ module.exports = {
                 if (Math.abs(ave.light - result.light) > 20) {
                     obj.light.flag = true;
                 }  
-                if (ave.smoke - result.smoke > 10) {
+                if (ave.smoke - result.smoke > 5) {
                     obj.smoke.flag = true;
                 }
                 obj.temp.deviation = {
@@ -102,7 +102,7 @@ module.exports = {
                     min: parseFloat((min.light - result.light).toFixed(2)), 
                     max: parseFloat((max.light - result.light).toFixed(2))
                 }
-                obj.smoke.deviation = parseFloat((ave.smoke - result.smoke).toFixed(2))
+                obj.smoke.deviation = parseFloat((ave.smoke - result.smoke).toFixed(2));
                 
                 callback(obj);
             }          

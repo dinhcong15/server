@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 
 module.exports = {
   sendSenSorOneMin(data) {
-    fetch("http://localhost:3000/rasp/onemin", {
+    fetch("http://localhost:8400/add", {
       method:"post",
       headers:{
           "content-Type":"application/json"
@@ -23,13 +23,21 @@ module.exports = {
     ))
   },
 
-  sendSenSor(data) {
+  sendSenSor(obj) {
+    let a ={
+      room: 1,
+      temp: 99,
+      humi: 99,
+      light: 999,
+      smoke:998,
+      time:'23234',
+    }
     fetch("http://localhost:3000/rasp/async", {
       method:"post",
       headers:{
           "content-Type":"application/json"
       },
-      body:JSON.stringify(data)
+      body:JSON.stringify(obj)
     }).then(res=>res.json())
     .then(data=>{
         console.log(data)

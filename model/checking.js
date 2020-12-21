@@ -22,10 +22,10 @@ module.exports = {
         let average = await calculate.average(resultRaw);
         let max = await calculate.max(resultRaw);
         let min = await calculate.min(resultRaw);
-        let increase = await calculate.increase(resultRaw);
-        let reduction = await calculate.reduction(resultRaw)
+        // let increase = await calculate.increase(resultRaw);
+        // let reduction = await calculate.reduction(resultRaw)
 
-        compare.compareDataSendServer(average, min, max, increase, reduction,  function (result) {
+        compare.compareDataSendServer(average, min, max, function (result) {
           let message = "";
           let data = new Data.DataSendAsync()
           // console.log(result)
@@ -74,26 +74,53 @@ module.exports = {
             let flagSend = false;
             if (data.temp.warning === true || data.temp.warningStandard === true) {
               flagSend = true;
-              countRoom1 = 0;
-              if (data.temp.deviation.ave > 0) {
-                message = message + 'room:' + result.room + '|Id:led01|status:ON|999'
-                mqttRouter.sendEsp(message)
-              } else {
-                message = message + 'room:' + result.room + '|Id:led01|status:OFF|999'
-                mqttRouter.sendEsp(message)
+              // countRoom1 = 0;
+              if(data.temp.warning === true){
+                if (data.temp.deviation.ave > 0 ) {
+                  message = message + 'room:' + result.room + '|Id:led01|status:OFF'
+                  mqttRouter.sendEsp(message)
+                } else {
+                  // message = message + 'room:' + result.room + '|Id:led01|status:ON|999'
+                  mqttRouter.sendEsp(message)
+                }
+                message = "";
               }
-              message = "";
+              
+              if(data.temp.warningStandard === true){
+                if (data.temp.deviationStandard.ave > 0 ) {
+                  message = message + 'room:' + result.room + '|Id:led01|status:OFF'
+                  mqttRouter.sendEsp(message)
+                } else {
+                  message = message + 'room:' + result.room + '|Id:led01|status:ON|999'
+                  mqttRouter.sendEsp(message)
+                }
+                message = "";
+              }
             }
             if (data.light.warning === true || data.light.warningStandard === true) {
               flagSend = true;
-              if (data.light.deviation.ave > 0) {
-                message = message + 'room:' + result.room + '|Id:led02|status:ON|999'
-                mqttRouter.sendEsp(message)
-              } else {
-                message = message + 'room:' + result.room + '|Id:led02|status:OFF|999'
-                mqttRouter.sendEsp(message)
+              if(data.light.warning === true){
+                if (data.light.deviation.ave > 0) {
+                  message = message + 'room:' + result.room + '|Id:led02|status:OFF'
+                  mqttRouter.sendEsp(message)
+                } else {
+                  message = message + 'room:' + result.room + '|Id:led02|status:ON|999'
+                  mqttRouter.sendEsp(message)
+                }
+                message = "";
               }
-              message = "";
+              
+              if(data.light.warningStandard === true){
+                if (data.light.deviationStandard.ave > 0 ) {
+                  message = message + 'room:' + result.room + '|Id:led02|status:OFF'
+                  mqttRouter.sendEsp(message)
+                } else {
+                  message = message + 'room:' + result.room + '|Id:led02|status:ON|999'
+                  mqttRouter.sendEsp(message)
+                }
+                message = "";
+              }
+              
             }
             if (data.smoke.warning === true || data.smoke.warningStandard === true) {
               flagSend = true;
@@ -105,8 +132,8 @@ module.exports = {
             }
             if(flagSend ===true ){
               // console.log('1515151515151515')
-              send.sendSenSor(data)
-              flagSend = false;
+              // send.sendSenSor(data);
+              // flagSend =false;
             }
           })
         });///
@@ -173,36 +200,36 @@ module.exports = {
             //////////////////////////////////----------------------//////////////////////////////
             if (data.temp.warning === true || data.temp.warningStandard === true) {
               if (data.temp.deviation.ave > 0) {
-                message = message + 'room:' + result.room + '|Id:led01|status:ON|999'
+                message = message + 'room:' + result.room + '|Id:led01|status:ON'
                 mqttRouter.sendEsp(message)
               } else {
-                message = message + 'room:' + result.room + '|Id:led01|status:OFF|999'
+                message = message + 'room:' + result.room + '|Id:led01|status:OFF'
                 mqttRouter.sendEsp(message)
               }
               message = "";
             }
             if (data.light.warning === true || data.light.warningStandard === true) {
               if (data.light.deviation.ave > 0) {
-                message = message + 'room:' + result.room + '|Id:led02|status:ON|999'
+                message = message + 'room:' + result.room + '|Id:led02|status:ON'
                 mqttRouter.sendEsp(message)
               } else {
-                message = message + 'room:' + result.room + '|Id:led02|status:OFF|999'
+                message = message + 'room:' + result.room + '|Id:led02|status:OFF'
                 mqttRouter.sendEsp(message)
               }
               message = "";
             }
             if (data.smoke.warning === true || data.smoke.warningStandard === true) {
               if (data.smoke.deviation.ave > 0) {
-                message = message + 'room:' + result.room + '|Id:led03|status:ON|999'
+                message = message + 'room:' + result.room + '|Id:led03|status:ON'
                 mqttRouter.sendEsp(message)
               } else {
-                message = message + 'room:' + result.room + '|Id:led03|status:OFF|999'
+                message = message + 'room:' + result.room + '|Id:led03|status:OFF'
                 mqttRouter.sendEsp(message)
               }
               message = "";
             }
-            send.sendSenSorOneMin(data);
-            console.log('1min--------------------------')
+            // send.sendSenSorOneMin(data);
+            // console.log('1min--------------------------')
             
           })     
         });///

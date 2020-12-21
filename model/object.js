@@ -7,7 +7,7 @@ class DataSendAsync {
             deviationStandard: { ave: 0, max: 0, min: 0 },
             deviation: { ave: 0, max: 0, min: 0 },
             warningStandard: false,
-            warning: false
+            warning: false,
         },
         this.humi = {
             humi: { ave: 0, max: 0, min: 0 },
