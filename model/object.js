@@ -1,31 +1,33 @@
 class DataSendAsync {
     constructor() {
-        this.home = "AAA";
         this.room = "";
         this.temp = {
-            temp: { ave: 0, max: 0, min: 0 },
-            deviationStandard: { ave: 0, max: 0, min: 0 },
-            deviation: { ave: 0, max: 0, min: 0 },
+            temp: 0.0,
+            // temp: { ave: 0, max: 0, min: 0 },
+            // deviationStandard: { ave: 0, max: 0, min: 0 },
+            // deviation: { ave: 0, max: 0, min: 0 },
             warningStandard: false,
-            warning: false,
+            warning: false
         },
         this.humi = {
-            humi: { ave: 0, max: 0, min: 0 },
-            deviationStandard: { ave: 0, max: 0, min: 0 },
-            deviation: { ave: 0, max: 0, min: 0 },
+            humi: 0.0,
+            // humi: { ave: 0, max: 0, min: 0 },
+            // deviationStandard: { ave: 0, max: 0, min: 0 },
+            // deviation: { ave: 0, max: 0, min: 0 },
             warningStandard: false,
             warning: false
         },
         this.light = {
-            light: { ave: 0, max: 0, min: 0 },
-            deviationStandard: { ave: 0, max: 0, min: 0 },
-            deviation: { ave: 0, max: 0, min: 0 },
+            light: 0.0,
+            // light: { ave: 0, max: 0, min: 0 },
+            // deviationStandard: { ave: 0, max: 0, min: 0 },
+            // deviation: { ave: 0, max: 0, min: 0 },
             warningStandard: false,
             warning: false
         },
         this.smoke = {
             smoke: 0.0,
-            deviation: 0.0,
+            // deviation: 0.0,
             warningStandard: false,
             warning: false
         },
@@ -35,13 +37,20 @@ class DataSendAsync {
 
 class DataSensor {
     constructor() {
-        this.home = "AAA";
         this.room = "";
         this.temp = 0.0;
         this.humi = 0.0
         this.light = 0.0;
         this.smoke = 0.0;
         this.time = ''
+    }
+}
+
+class DataDevice {
+    constructor() {
+        this.room = 0;
+        this.id = "";
+        this.status = ""
     }
 }
 
@@ -76,4 +85,5 @@ module.exports = {
     DataSendAsync: DataSendAsync,
     DataSensor: DataSensor,
     DataCheck: DataCheck,
+    DataDevice: DataDevice
 } 

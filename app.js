@@ -4,31 +4,43 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-// global.DB =  new sqlite3.Database('./dataBase/test')
+global.flagS = false 
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 var mqttRouter = require('./model/mqtt');
-var mySqlite = require('./model/db')
+var send = require('./model/aSend')
 // var NodeData = require('./model/nodeData')
 var myProcess = require('./model/process')
 var format = require('./model/dataFormat')
-var check = require('./model/checking')
+var checkSer = require('./model/checkServer')
 // var nodeData = new NodeData();
 var calculate = require('./model/calculate')
 var app = express();
-
+// var cors = require('cors');
 
 mqttRouter.connect()
 
-setInterval(function(){
-  myProcess.myProcess();
-}, 12000)
+// setInterval(function(){
+//   myProcess.myProcess();
+// }, 6000)
+
+// setInterval(function(){
+//   myProcess.oneMin();
+// }, 3000)
 
 setInterval(function(){
-  myProcess.oneMin();
-}, 60000)
+  checkSer.checkServer();
+  // checkSer.reSend()
+}, 6000)
 
+// let a = true; let b = false
+// myProcess.a()
+// console.log(global.flagS)
+// if(global.flagS===true){
+  
+//   checkSer.reSend()
+// }
+// send.reSendData('s');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -41,7 +53,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 // mqttRouter.connect
 
 // catch 404 and forward to error handler

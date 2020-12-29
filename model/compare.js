@@ -3,12 +3,15 @@ let db = new sqlite3.Database('./dataBase/test');
 var Data = require('./object')
 
 module.exports = {
-    compareDataStandard(ave, min, max,  callback) {
+    compareDataStandard(ave, min, max, callback) {
         let obj = new Data.DataCheck()
         obj.room = ave.room;
         obj.temp.value =  {ave: ave.temp, min :min.temp, max: max.temp}
         obj.humi.value = {ave: ave.humi, min :min.humi, max: max.humi}
         obj.light.value = {ave: ave.light, min :min.light, max: max.light}
+        // obj.temp.value = ave.temp
+        // obj.humi.value = ave.humi
+        // obj.light.value = ave.light
         obj.smoke.value = ave.smoke
 
         var sql = 'select * from standard where room = ? order by time desc limit 1'
@@ -21,10 +24,10 @@ module.exports = {
                 callback(null);        
             }
             else{
-                if (Math.abs(ave.temp - result.temp) > 0.5) {
+                if (Math.abs(ave.temp - result.temp) > 1) {
                     obj.temp.flag = true;
                 }  
-                if (Math.abs(ave.humi - result.humi) > 2) {
+                if (Math.abs(ave.humi - result.humi) > 5) {
                     obj.humi.flag = true;
                 }  
                 if (Math.abs(ave.light - result.light) > 20) {
@@ -74,11 +77,12 @@ module.exports = {
             }else{
                 if (Math.abs(ave.temp - result.temp) > 0.5) {
                     //day tang hoac giam
-                    // if(increase.temp ===true||reduction.temp===true){
+                    // if((increase.temp ===true && ave.temp > result.temp)||(reduction.temp ===true && ave.temp < result.temp))                    {
                     //     obj.temp.flag = true;
-                    // }                   
+                    // } 
+                    obj.temp.flag = true;                  
                 }  
-                if (Math.abs(ave.humi - result.humi) > 2) {
+                if (Math.abs(ave.humi - result.humi) > 5) {
                     obj.humi.flag = true;
                 }  
                 if (Math.abs(ave.light - result.light) > 20) {

@@ -1,11 +1,8 @@
 var sqlite3 = require('sqlite3').verbose()
-// const db = require('./db');
-// var dataBase = require('./db')
-// dataBase.connect('./dataBase/test', function(err) {
-//     if(err)
-//     throw err;
-// });
+var Data = require('./object')
 let db = new sqlite3.Database('./dataBase/test');
+var send = require('./aSend')
+var mqttRouter = require('./mqtt');
 
 module.exports = {
     async disassembleEsp(message) {
@@ -38,6 +35,11 @@ module.exports = {
             });
         }
         if (Number(arrSaveDB[0])===2 && arrCheck[0]== "flag"){
+            let data = new Data.DataDevice();
+            data.room = Number(arrSaveDB[1]);
+            data.id = arrSaveDB[2];
+            data.status = arrSaveDB[3];
+
             let sql ="select * from devices where id = ?"
             let params = [arrSaveDB[2]]
             db.get(sql, params, function(err, result){
@@ -57,17 +59,38 @@ module.exports = {
                         if(errr)
                             console.log(err);
                     })
+                    // send.sendevice(data);
                 }
             })
             
         }  
     },
-    //nhan tu server
+    //nhan chuan tu server
     disassembleStandardServer(message){             
-        // var date = new Date();
-        // var sql ='INSERT INTO standard (room, temp, humi, light, smoke, time) VALUES (?,?,?,?,?,?)'
-        // var params =[message.room, message.temp,message.hummi,message.light,message.smoke, message.time]
-            
+        var time = new Date();
+        var sql ='INSERT INTO standard (room, temp, humi, light, smoke, time) VALUES (?,?,?,?,?,?)'
+        var params =[message.room, message.temp,message.hummi,message.light,message.smoke, time]
+        db.run(sql, params, function(errr){
+            if(err)
+                console.log(errr);
+        })           
+    },
+
+
+    //nhan device tu server
+    disassembleDeviceServer(message){  
+        console.log(message)           
+        var sql ='update devices set status = ? where id = ?'
+        var params =["ON", message.id]
+        db.run(sql, params, function(errr){
+            if(errr)
+                console.log(errr);
+        }) 
+        let idd = message.id.slice(2, 7)
+        //send esp
+        let mess = ''
+        mess = 'room:0' + message.room + '|Id:'+ idd +'|status:' + "ON"
+        mqttRouter.sendEsp(mess)          
     },
     
 }

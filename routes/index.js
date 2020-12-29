@@ -1,15 +1,21 @@
 var express = require('express');
 var router = express.Router();
-// const http = require('http');
-var process = require('../model/process')
+var cors = require('cors');
+var dataFormat = require('../model/dataFormat')
 
-/* GET home page. */
-router.post('/server/disconnect',async function(req, res) {
-  process.resend(req.body.time, function(data){
-    console.log(data)
-    res.json(data);
-  });
-  
+var corsOptions = {
+  origin: "*",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+}
+
+router.post('/receive_device',cors(corsOptions),async function(req, res) {
+  console.log(req.body.id)
+  dataFormat.disassembleDeviceServer(req.body);
+  res.json({msg: 'OK'})
+
 });
+
 
 module.exports = router;
