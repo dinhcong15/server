@@ -59,7 +59,7 @@ module.exports = {
                         if(errr)
                             console.log(err);
                     })
-                    // send.sendevice(data);
+                    send.sendevice(data);
                 }
             })
             

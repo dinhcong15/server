@@ -1,5 +1,5 @@
 let fetch = require('node-fetch');
-// let myProcess = require('./process')
+
 module.exports = {
     sendSenSorOneMin(obj) {
         let a ={
@@ -68,28 +68,6 @@ module.exports = {
             console.log(err)
         ))
     },
-
-
-    // checkServer() {    
-    //     function checkStatus(res) {
-    //         if (res.ok) { // res.status >= 200 && res.status < 300
-    //             myProcess.connected();
-    //             // console.log('1')
-    //             return res;
-    //         } else {
-    //             // console.log('2')
-    //             myProcess.disconnected();
-    //         }
-    //     }
-
-    //     fetch('http://localhost:8400/data/check')
-    //     .then(checkStatus)
-    //     .then(res => console.log('will not get here...'))
-    //     .catch(err=>{
-    //         myProcess.disconnected();
-    //         console.log(err)
-    //     })
-    // },
 
     sendSenSor(obj) {
         console.log('sendsensor')

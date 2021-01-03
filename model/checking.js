@@ -28,28 +28,17 @@ module.exports = {
         compare.compareDataSendServer(average, min, max, function (result) {
           let message = "";
           let data = new Data.DataSendAsync()
-          // console.log(result)
+
           data.room = result.room;
           //value
           data.temp.temp = average.temp;
           data.humi.humi = average.humi;
           data.light.light = average.light;
           data.smoke.smoke = average.smoke;
-          // data.time = new Date();
-          // console.log(result)
-          // data.temp.temp = { ave: average.temp, min: min.temp, max: max.temp }
-          // data.humi.humi = { ave: average.humi, min: min.humi, max: max.humi }
-          // data.light.light = { ave: average.light, light: min.light, max: max.light }
           
           if (result == null) {
             console.log('data empty!')
           } else {
-            //deviation
-            // data.temp.deviation = result.temp.deviation
-            // data.humi.deviation = result.humi.deviation
-            // data.light.deviation = result.light.deviation
-            // data.smoke.deviation = result.humi.deviation.ave
-            //flag
             data.temp.warning = result.temp.flag
             data.humi.warning = result.humi.flag
             data.light.warning = result.light.flag
@@ -62,12 +51,6 @@ module.exports = {
               console.log('data empty!')
             }
             else {
-              //deviation
-              // data.temp.deviationStandard = resultStandard.temp.deviation
-              // data.humi.deviationStandard = resultStandard.humi.deviation
-              // data.light.deviationStandard = resultStandard.light.deviation
-              // data.smoke.deviationStandard = resultStandard.humi.deviation.ave
-              //flag
               data.temp.warningStandard = resultStandard.temp.flag
               data.humi.warningStandard = resultStandard.humi.flag
               data.light.warningStandard = resultStandard.light.flag
@@ -96,7 +79,7 @@ module.exports = {
                   message = message + 'room:' + result.room + '|Id:led01|status:OFF'
                   mqttRouter.sendEsp(message)
                 } else {
-                  message = message + 'room:' + result.room + '|Id:led01|status:ON|ss'
+                  message = message + 'room:' + result.room + '|Id:led01|status:ON'
                   mqttRouter.sendEsp(message)
                 }
                 message = "";
@@ -121,7 +104,7 @@ module.exports = {
                   message = message + 'room:' + result.room + '|Id:led02|status:OFF'
                   mqttRouter.sendEsp(message)
                 } else {
-                  message = message + 'room:' + result.room + '|Id:led02|status:ON|ss'
+                  message = message + 'room:' + result.room + '|Id:led02|status:ON'
                   mqttRouter.sendEsp(message)
                 }
                 message = "";
@@ -138,6 +121,7 @@ module.exports = {
             }
             if(flagSend ===true ){
               // console.log(data)
+              data.time = new Date();
               sending.sendSenSor(data);
               let sql1 ='INSERT INTO dataSendServer (room, temp, humi, light, smoke, time) VALUES (?,?,?,?,?,?)';
               let params1 = [  
@@ -146,7 +130,7 @@ module.exports = {
                 data.humi.humi,
                 data.light.light,
                 data.smoke.smoke,
-                new Date()
+                data.time
               ]
               //sqlite3 khong ho tro async nen chi dung callback
               db.run(sql1, params1, function(err1){
@@ -190,12 +174,6 @@ module.exports = {
           if (result == null) {
             console.log('data empty!')
           } else {
-            //deviation
-            // data.temp.deviation = result.temp.deviation
-            // data.humi.deviation = result.humi.deviation
-            // data.light.deviation = result.light.deviation
-            // data.smoke.deviation = result.humi.deviation.ave
-            //flag
             data.temp.warning = result.temp.flag
             data.humi.warning = result.humi.flag
             data.light.warning = result.light.flag
@@ -209,11 +187,6 @@ module.exports = {
               console.log('data empty!')
             }
             else {
-              //deviation
-              // data.temp.deviationStandard = resultStandard.temp.deviation
-              // data.humi.deviationStandard = resultStandard.humi.deviation
-              // data.light.deviationStandard = resultStandard.light.deviation
-              //flag
               data.temp.warningStandard = resultStandard.temp.flag
               data.humi.warningStandard = resultStandard.humi.flag
               data.light.warningStandard = resultStandard.light.flag 
@@ -277,29 +250,22 @@ module.exports = {
             }
             let date = new Date();
             data.time = date
-            // console.log(data)
-            calculate.min(resultRaw);
-            
             sending.sendSenSorOneMin(data); 
             
-
-              let sql1 ='INSERT INTO dataSendServer (room, temp, humi, light, smoke, time) VALUES (?,?,?,?,?,?)';
-              let params1 = [  
-                data.room,
-                data.temp.temp,
-                data.humi.humi,
-                data.light.light,
-                data.smoke.smoke,
-                new Date()
-              ]
-              //sqlite3 khong ho tro async nen chi dung callback
-              db.run(sql1, params1, function(err1){
-                  if(err1)
-                      console.log(err1);
-              });
-
-              
-            
+            let sql1 ='INSERT INTO dataSendServer (room, temp, humi, light, smoke, time) VALUES (?,?,?,?,?,?)';
+            let params1 = [  
+              data.room,
+              data.temp.temp,
+              data.humi.humi,
+              data.light.light,
+              data.smoke.smoke,
+              data.time
+            ]
+            //sqlite3 khong ho tro async nen chi dung callback
+            db.run(sql1, params1, function(err1){
+                if(err1)
+                    console.log(err1);
+            });
           })   
            
         });///

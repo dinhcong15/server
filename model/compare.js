@@ -3,7 +3,7 @@ let db = new sqlite3.Database('./dataBase/test');
 var Data = require('./object')
 
 module.exports = {
-    compareDataStandard(ave, min, max, callback) {
+    async compareDataStandard(ave, min, max, callback) {
         let obj = new Data.DataCheck()
         obj.room = ave.room;
         obj.temp.value =  {ave: ave.temp, min :min.temp, max: max.temp}

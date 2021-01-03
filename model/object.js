@@ -3,25 +3,16 @@ class DataSendAsync {
         this.room = "";
         this.temp = {
             temp: 0.0,
-            // temp: { ave: 0, max: 0, min: 0 },
-            // deviationStandard: { ave: 0, max: 0, min: 0 },
-            // deviation: { ave: 0, max: 0, min: 0 },
             warningStandard: false,
             warning: false
         },
         this.humi = {
             humi: 0.0,
-            // humi: { ave: 0, max: 0, min: 0 },
-            // deviationStandard: { ave: 0, max: 0, min: 0 },
-            // deviation: { ave: 0, max: 0, min: 0 },
             warningStandard: false,
             warning: false
         },
         this.light = {
             light: 0.0,
-            // light: { ave: 0, max: 0, min: 0 },
-            // deviationStandard: { ave: 0, max: 0, min: 0 },
-            // deviation: { ave: 0, max: 0, min: 0 },
             warningStandard: false,
             warning: false
         },

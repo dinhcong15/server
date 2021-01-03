@@ -8,7 +8,6 @@ module.exports = {
     check.checkData('01', 4);  
     check.checkData('02', 4);
     check.checkData('03', 4);
-    // this.a('01', 5)
   },
 
   oneMin(){

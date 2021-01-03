@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+let ftest = require('./model/test')
 
 global.flagS = false 
 
@@ -18,29 +19,21 @@ var calculate = require('./model/calculate')
 var app = express();
 // var cors = require('cors');
 
-mqttRouter.connect()
+mqttRouter.connect();
 
 // setInterval(function(){
 //   myProcess.myProcess();
 // }, 6000)
+// ftest.compareDataStandard(1,2,3)
 
 // setInterval(function(){
 //   myProcess.oneMin();
-// }, 3000)
+// }, 30000)
 
 setInterval(function(){
   checkSer.checkServer();
-  // checkSer.reSend()
 }, 6000)
 
-// let a = true; let b = false
-// myProcess.a()
-// console.log(global.flagS)
-// if(global.flagS===true){
-  
-//   checkSer.reSend()
-// }
-// send.reSendData('s');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

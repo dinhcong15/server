@@ -1,28 +1,23 @@
 let fetch = require('node-fetch');
-// const { get } = require('../routes');
 var sqlite3 = require('sqlite3').verbose()
 let db = new sqlite3.Database('./dataBase/test');
 let send = require('./aSend')
 
-// let flag = false;
 module.exports = {
     checkServer() {    
         async function checkStatus(res) {
             if (res.ok) { // res.status >= 200 && res.status < 300
                 // this.connected();
-                // console.log('1')
                 return res;
             } else {
-                // console.log('2')
                 // this.disconnected();
                 throw res.statusText;
             }
         }
-
         fetch('http://localhost:8400/data/check',)
         .then(checkStatus)
         .then(res => {
-            console.log('will not get here...')
+            // console.log('will not get here...')
             this.connected();
         })
         .catch(err=>{
@@ -32,7 +27,6 @@ module.exports = {
     },
 
     disconnected(){
-        // sending.reSendData("resultSend")
         let boo = false
         let time = new Date()
         let sql = "SELECT * FROM checkServer ORDER BY id DESC LIMIT ?"
@@ -96,53 +90,15 @@ module.exports = {
                         console.error(err31)
                         return;
                     }else{
-                        console.log("resultSend");
+                        console.log(resultSend);
                         send.reSendData(resultSend)
                     }
                     });
                 }
                 });  
             }
-            // else if(result.status === 1){               
-            //     sql ="update checkServer set count = ? where id = ?"
-            //     params = [0, result.ID]
-            //     db.run(sql, params, function(errr){
-            //         if(errr)
-            //             console.log(err);
-            //     });
-            // }
             
-        });
-        // this.reSend()     
+        });    
       },
-
-    
-
-      reSend(){
-        console.log("///////////")
-        let sql = "SELECT * FROM checkServer where status = 0  ORDER BY id DESC LIMIT ?";
-        let params = 1;
-        db.get(sql, params, function(err, result){
-          if(err){
-            console.log(err);
-          }else if(result==undefined){
-            console.log("null");        
-          }
-          else {
-            console.log(result);
-            sql = 'select * from dataSendServer where time >= ? limit ?'
-            params = [result.time, result.count]
-            db.all(sql, params, async function (err1, resultSend) {
-              if (err1) {
-                console.error(err1)
-                return;
-              }else{
-                console.log("resultSend");
-                send.reSendData(resultSend)
-              }
-            });
-          }
-        });  
-      },
-    
+ 
 }
