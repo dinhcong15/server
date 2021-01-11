@@ -4,7 +4,7 @@ var sqlite3 = require('sqlite3').verbose()
 var Data = require('./object')
 let db = new sqlite3.Database('./dataBase/test');
 var settings = {
-    mqttServerUrl : "192.168.137.60",
+    mqttServerUrl : "192.168.137.200",
     port : 18833,
     topic : "HOME01"
 }

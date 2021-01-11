@@ -16,11 +16,10 @@ module.exports = {
 
         var sql = 'select * from standard where room = ? order by time desc limit 1'
         db.get(sql, ave.room, function (err, result) {
-            // console.log(result)
             if(err){
                 callback(err);
             }
-            else if(result==''){
+            else if(result==undefined){
                 callback(null);        
             }
             else{
@@ -71,7 +70,7 @@ module.exports = {
             if(err){
                 callback(err);
             }
-            else if(result==''){
+            else if(result==undefined){
                 callback(null);
             
             }else{

@@ -246,6 +246,10 @@ module.exports = {
                 message = 'warning from pi' +'|room:'+ resultStandard.room 
                 mqttRouter.sendEsp(message)
               } 
+              else {
+                message = message + 'room:' + result.room + '|Id:led02|status:ON'
+                mqttRouter.sendEsp(message)
+              }
               message = "";
             }
             let date = new Date();

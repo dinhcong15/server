@@ -21,18 +21,17 @@ var app = express();
 
 mqttRouter.connect();
 
-// setInterval(function(){
-//   myProcess.myProcess();
-// }, 6000)
-// ftest.compareDataStandard(1,2,3)
+setInterval(function(){
+  myProcess.myProcess();
+}, 6000)
 
-// setInterval(function(){
-//   myProcess.oneMin();
-// }, 30000)
+setInterval(function(){
+  myProcess.oneMin();
+}, 3000)
 
 setInterval(function(){
   checkSer.checkServer();
-}, 6000)
+}, 30000)
 
 
 // view engine setup

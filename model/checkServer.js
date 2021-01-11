@@ -17,11 +17,12 @@ module.exports = {
         fetch('http://localhost:8400/data/check',)
         .then(checkStatus)
         .then(res => {
-            // console.log('will not get here...')
+            console.log('connected')
             this.connected();
         })
         .catch(err=>{
             this.disconnected();
+            console.log('disconnected')
             console.log(err)
         })
     },
@@ -62,7 +63,7 @@ module.exports = {
         let sql = "SELECT * FROM checkServer ORDER BY id DESC LIMIT ?"
         let params = 1;
         db.get(sql,params,async  function(err, result){
-            console.log(result)
+            // console.log(result)
             if(err)
                 console.log(err);
             else if(result.status === 0){               

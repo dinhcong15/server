@@ -1,11 +1,13 @@
 let fetch = require('node-fetch');
-
+let dataFormat = require('./dataFormat')
+let sqlite3 = require('sqlite3').verbose()
+let db = new sqlite3.Database('./dataBase/test');
 module.exports = {
     sendSenSorOneMin(obj) {
         let a ={
             room: obj.room,
             temp: {temp: obj.temp.temp, x:false, y:false},
-            humid: {humid: obj.humi.humi, x:false, y:false},
+            humi: {humi: obj.humi.humi, x:false, y:false},
             light: {light: obj.light.light, x:false, y:false},
             smoke:{smoke: obj.smoke.smoke, x:false, y:false},
             time: obj.time,
@@ -21,8 +23,15 @@ module.exports = {
         .then(res=> res.json())
         .then(data=>{
             console.log(data)
-            
-        }).catch(err=>{
+            // dataFormat.disassembleStandardServer(data)
+            var time = new Date();
+            var sql = 'update standard set temp = ?, humi = ?, light = ?, smoke = ?, time = ? where room = ?'
+            var params = [data.temp, data.humi, data.light, data.smoke, time, data.id]
+            db.run(sql, params, function (errr) {
+                if (errr)
+                    console.log(errr);
+            })
+       }).catch(err=>{
         console.log(err)
         })
     },
@@ -74,7 +83,7 @@ module.exports = {
         let a ={
             room: obj.room,
             temp: {temp: obj.temp.temp, x:false, y:false},
-            humid: {humid: obj.humi.humi, x:false, y:false},
+            humi: {humi: obj.humi.humi, x:false, y:false},
             light: {light: obj.light.light, x:false, y:false},
             smoke:{smoke: obj.smoke.smoke, x:false, y:false},
             time: obj.time,
@@ -87,7 +96,7 @@ module.exports = {
         body:JSON.stringify(a)
         }).then(res=>res.json())
         .then(data=>{
-            console.log("/////////////////")
+            console.log(data)
             if(data.error){
                 console.log("error!!!")
             }
