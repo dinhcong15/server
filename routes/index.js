@@ -11,7 +11,7 @@ var corsOptions = {
 }
 
 router.post('/receive_device',cors(corsOptions),async function(req, res) {
-  console.log(req.body.id)
+  console.log(req.body)
   dataFormat.disassembleDeviceServer(req.body);
   res.json({msg: 'OK'})
 

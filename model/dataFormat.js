@@ -5,6 +5,7 @@ var send = require('./aSend')
 var mqttRouter = require('./mqtt');
 
 module.exports = {
+    //hàm này ko đc gọi
     async disassembleEsp(message) {
         let arrSaveDB = [];
         let arrCheck = [];
@@ -34,12 +35,13 @@ module.exports = {
                     console.log(err);
             });
         }
+        // console.log(Number(arrSaveDB[0]))
         if (Number(arrSaveDB[0]) === 2 && arrCheck[0] == "flag") {
             let data = new Data.DataDevice();
             data.room = Number(arrSaveDB[1]);
             data.id = arrSaveDB[2];
             data.status = arrSaveDB[3];
-
+            console.log("data")
             let sql = "select * from devices where id = ?"
             let params = [arrSaveDB[2]]
             db.get(sql, params, function (err, result) {
@@ -60,6 +62,7 @@ module.exports = {
                             console.log(err);
                     })
                     send.sendevice(data);
+                    // console.log(data)
                 }
             })
 
@@ -86,7 +89,13 @@ module.exports = {
             if (errr)
                 console.log(errr);
         })
-        let idd = message.id.slice(2, 7)
+        let idd = message.id.slice(2, 7);
+        //server gui ve bi nguoc
+        // if(message.status =="ON"){
+        //     message.status = "OFF"
+        // }else if(message.status =="OFF"){
+        //     message.status = "ON"
+        // }
         //send esp
         let mess = ''
         mess = 'room:0' + message.room + '|Id:' + idd + '|status:' + message.status

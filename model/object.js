@@ -3,24 +3,24 @@ class DataSendAsync {
         this.room = "";
         this.temp = {
             temp: 0.0,
-            warningStandard: false,
-            warning: false
+            x: false, //warningStandard
+            y: false          //warning
         },
         this.humi = {
             humi: 0.0,
-            warningStandard: false,
-            warning: false
+            x: false,
+            y: false
         },
         this.light = {
             light: 0.0,
-            warningStandard: false,
-            warning: false
+            x: false,
+            y: false
         },
         this.smoke = {
             smoke: 0.0,
             // deviation: 0.0,
-            warningStandard: false,
-            warning: false
+            x: false,
+            y: false
         },
         this.time = ''
     }
@@ -39,8 +39,8 @@ class DataSensor {
 
 class DataDevice {
     constructor() {
-        this.room = 0;
         this.id = "";
+        this.room = 0;
         this.status = ""
     }
 }

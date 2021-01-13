@@ -9,7 +9,7 @@ var settings = {
     topic : "HOME01"
 }
 var client = mqtt.connect('mqtt://' + settings.mqttServerUrl);
-
+var send = require('./aSend')
 module.exports={
     async connect(){
         console.log('Connect Mqtt')
@@ -28,7 +28,7 @@ module.exports={
         
         client.on('message',async function(topic, message){
             console.log("Message: " + message.toString());
-            let arrSaveDB =[] ;
+        let arrSaveDB =[] ;
         let arrCheck=[];
         let arr = []
         arr = String(message).split('|');
@@ -81,7 +81,8 @@ module.exports={
                         if(errr)
                             console.log(err);
                     })
-                    // send.sendevice(data);
+                    send.senddevice(data);
+                    console.log(data)
                 }
             })
             

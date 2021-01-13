@@ -3,7 +3,6 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-let ftest = require('./model/test')
 
 global.flagS = false 
 
@@ -15,7 +14,7 @@ var myProcess = require('./model/process')
 var format = require('./model/dataFormat')
 var checkSer = require('./model/checkServer')
 // var nodeData = new NodeData();
-var calculate = require('./model/calculate')
+var c = require('./model/checkServer')
 var app = express();
 // var cors = require('cors');
 
@@ -27,7 +26,7 @@ setInterval(function(){
 
 setInterval(function(){
   myProcess.oneMin();
-}, 3000)
+}, 30000)
 
 setInterval(function(){
   checkSer.checkServer();
